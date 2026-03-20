@@ -1,0 +1,23 @@
+<section>
+  @{
+    IDocument rssFeed = Outputs["**/*.rss"].FirstOrDefault();
+    IDocument atomFeed = Outputs["**/*.atom"].FirstOrDefault();
+  }
+  @if (rssFeed != null || atomFeed != null)
+  {
+    <h2>Feeds</h2>
+    <ul class="actions">
+      @if (rssFeed != null)
+      {
+        <li><a href="@Context.GetLink(rssFeed)" class="button small"><i class="fas fa-rss"></i> RSS Feed</a></li>
+      }
+      @if (atomFeed != null)
+      {
+        <li><a href="@Context.GetLink(atomFeed)" class="button small"><i class="fas fa-rss"></i> Atom Feed</a></li>
+      }
+    </ul>
+  }
+</section>
+<section>
+</section>
+@Html.Partial("_copyright")

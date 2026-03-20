@@ -1,0 +1,28 @@
+@* Uncomment and configure Disqus or another comment system here.
+   See https://disqus.com for instructions on how to add Disqus to your site.
+
+@if (Context.GetBool("DisqusEnabled", false))
+{
+  string disqusShortname = Context.GetString("DisqusShortname");
+  if (!string.IsNullOrWhiteSpace(disqusShortname))
+  {
+    <section class="main">
+      <div id="disqus_thread"></div>
+      @section Scripts {
+        <script>
+          var disqus_config = function () {
+            this.page.url = "@Document.GetLink(true)";
+            this.page.identifier = "@Document.GetString("Title")";
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://@(disqusShortname).disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+      }
+    </section>
+  }
+}
+*@

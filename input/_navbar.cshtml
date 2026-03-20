@@ -1,0 +1,6 @@
+@foreach (IDocument doc in Context.OutputPages.Where(x => x.GetBool("ShowInNavbar", x.GetBool("IsPage"))).OrderBy(x => x.GetInt(Keys.Order)))
+{
+  // Pages are added to the nav bar by default;
+  // other pages (including posts) only if they have ShowInNavbar set to true
+  <li><a href="@Context.GetLink(doc)">@doc.GetString("NavbarTitle", doc.GetTitle())</a></li>
+}
