@@ -1,0 +1,117 @@
+@{
+  var isPost = Document.GetBool("IsPost") && !Document.GetBool("IsPostArchive");
+  var isPage = Document.GetBool("IsPage");
+}
+<!DOCTYPE html>
+<!--
+  Stellar by HTML5 UP
+  html5up.net | @ajlkn
+  Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html lang="en">
+  <head>
+    <title>@Document.GetString("PageTitle")</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @if (Document.ContainsKey(WebKeys.Description))
+    {
+      <meta name="description" content="@Document.GetString(WebKeys.Description)" />
+    }
+    @if (Document.ContainsKey(WebKeys.Author))
+    {
+      <meta name="author" content="@Document.GetString(WebKeys.Author)" />
+    }
+
+    <link rel="canonical" href='@(Document.GetString("Canonical") ?? Document.GetLink(true))' />
+
+    @{
+      foreach (IDocument rssFeed in Outputs["**/*.rss"])
+      {
+        <link type="application/rss+xml" rel="alternate" title="@rssFeed.GetString(WebKeys.Title)" href="@rssFeed.GetLink()" />
+      }
+      foreach (IDocument atomFeed in Outputs["**/*.atom"])
+      {
+        <link type="application/atom+xml" rel="alternate" title="@atomFeed.GetString(WebKeys.Title)" href="@atomFeed.GetLink()" />
+      }
+    }
+
+    <meta name="application-name" content='@Document.GetString("SiteTitle")' />
+    <meta name="msapplication-tooltip" content='@Document.GetString("SiteTitle")' />
+    <meta name="msapplication-starturl" content='@Context.GetLink("/")' />
+
+    <meta property="og:title" content='@Document.GetString("PageTitle")' />
+    @if (Document.ContainsKey(WebKeys.Image))
+    {
+      <meta property="og:image" content='@Context.GetLink(Document.GetString(WebKeys.Image))' />
+    }
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content='@Document.GetLink(true)' />
+
+    <link rel="icon" href='@Context.GetLink("/favicon.ico")' />
+
+    <!-- Font Awesome 5 Free (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <!-- Stellar Theme CSS -->
+    <link rel="stylesheet" href='@Context.GetLink("/assets/css/main.css")' />
+    <!--[if lte IE 9]><link rel="stylesheet" href='@Context.GetLink("/assets/css/ie9.css")' /><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href='@Context.GetLink("/assets/css/ie8.css")' /><![endif]-->
+
+    @Html.Partial("_head")
+
+    @RenderSection("Head", false)
+  </head>
+
+  <body>
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+      <!-- Header -->
+      @RenderSectionOrPartial("Header", "_header")
+
+      <!-- Nav -->
+      @RenderSectionOrPartial("Navigation", "_navigation")
+
+      <!-- Main -->
+      <div id="main">
+        <!-- Content -->
+        <section id="content" class="main">
+          @RenderBody()
+          @if (isPost)
+          {
+            @Html.Partial("_post-after-content")
+          }
+          else if (isPage)
+          {
+            @Html.Partial("_page-after-content")
+          }
+          @Html.Partial("_common-after-content")
+        </section>
+      </div>
+
+      @if (isPost)
+      {
+        @Html.Partial("_post-comments")
+      }
+
+      <!-- Footer -->
+      <footer id="footer">
+        @RenderSectionOrPartial("Footer", "_footer")
+      </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src='@Context.GetLink("/assets/js/jquery.min.js")'></script>
+    <script src='@Context.GetLink("/assets/js/jquery.scrollex.min.js")'></script>
+    <script src='@Context.GetLink("/assets/js/jquery.scrolly.min.js")'></script>
+    <script src='@Context.GetLink("/assets/js/skel.min.js")'></script>
+    <script src='@Context.GetLink("/assets/js/util.js")'></script>
+    <!--[if lte IE 8]><script src='@Context.GetLink("/assets/js/ie/respond.min.js")'></script><![endif]-->
+    <script src='@Context.GetLink("/assets/js/main.js")'></script>
+
+    @Html.Partial("_scripts")
+
+    @RenderSection("Scripts", false)
+  </body>
+</html>

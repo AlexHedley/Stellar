@@ -1,0 +1,17 @@
+MinimumStatiqWebVersion: "1.0.0-beta.36"
+SiteTitle: My Stellar Blog
+SiteDescription: A blog built with the Stellar theme for Statiq
+SiteIntro: A beautiful blog theme based on Stellar by HTML5 UP
+PageTitle: |
+  =>
+  {
+    string siteTitle = Context.GetString("SiteTitle");
+    string title = GetString("Title");
+    return string.IsNullOrWhiteSpace(siteTitle) ? title : (string.IsNullOrWhiteSpace(title) ? siteTitle : $"{siteTitle} - {title}");
+  }
+Copyright: => $"Copyright &copy; {DateTime.Now.Year}"
+PostSources: posts/**/*
+IsPost: => Context.Outputs.FilterSources(Context.GetString("PostSources")).ContainsById(Document)
+PageSources: pages/**/*
+IsPage: => Context.Outputs.FilterSources(Context.GetString("PageSources")).ContainsById(Document)
+Layout: /_layout.cshtml

@@ -1,0 +1,76 @@
+ShowInNavbar: => GetInt("Index") == 0
+Order: 100
+Title: Tags
+ArchiveSources: => GetString("PostSources")
+ArchiveFilter: => GetBool("IsPost")
+ArchiveKey: Tags
+ArchiveKeyComparer: => StringComparer.OrdinalIgnoreCase.ToConvertingEqualityComparer()
+ArchiveDestination: >
+  => GetInt("Index") <= 1 ? $"tags/{NormalizedPath.OptimizeFileName(GetString("GroupKey"))}/index.html" : $"tags/{NormalizedPath.OptimizeFileName(GetString("GroupKey"))}/{GetInt("Index")}.html"
+ArchivePageSize: 10
+ArchiveOrderKey: Published
+ArchiveOrderDescending: true
+ArchiveTitle: => GetString("GroupKey")
+---
+@if (Document.ContainsKey(Keys.GroupKey))
+{
+  <div class="row">
+    <div class="8u 12u$(medium)">
+      @foreach (IDocument post in Document.GetChildren())
+      {
+        @Html.Partial("/_post.cshtml", post)
+      }
+
+      @{
+        IDocument newer = Document.GetDocument(Keys.Previous);
+        IDocument older = Document.GetDocument(Keys.Next);
+      }
+      @if (older != null || newer != null)
+      {
+        <ul class="actions">
+          <li>
+            @if (newer != null)
+            {
+              <a class="button" href="@Context.GetLink(newer)"><span aria-hidden="true">&larr;</span> Newer</a>
+            }
+          </li>
+          <li>
+            @if (older != null)
+            {
+              <a class="button" href="@Context.GetLink(older)">Older <span aria-hidden="true">&rarr;</span></a>
+            }
+          </li>
+        </ul>
+      }
+    </div>
+    <div class="4u 12u$(medium)">
+      <ul class="icons">
+        @foreach (IDocument tag in Outputs.Get("tags/index.html").GetChildren().OrderByDescending(x => x.GetChildren().Count()))
+        {
+          bool isCurrentTag = Document.GetString(Keys.GroupKey).Equals(tag.GetTitle(), StringComparison.OrdinalIgnoreCase);
+          string postCount = tag.GetChildren().Count().ToString();
+          <li>
+            @if (isCurrentTag)
+            {
+              <strong><a href="@Context.GetLink(tag)">@tag.GetTitle() (@postCount)</a></strong>
+            }
+            else
+            {
+              <a href="@Context.GetLink(tag)">@tag.GetTitle() (@postCount)</a>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+}
+else
+{
+  <ul class="icons">
+    @foreach (IDocument tag in Document.GetChildren().OrderByDescending(x => x.GetChildren().Count()))
+    {
+      string postCount = tag.GetChildren().Count().ToString();
+      <li><a href="@Context.GetLink(tag)">@tag.GetTitle() (@postCount)</a></li>
+    }
+  </ul>
+}

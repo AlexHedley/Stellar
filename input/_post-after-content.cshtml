@@ -1,0 +1,18 @@
+@{
+  var tags = Document.GetList<string>("Tags");
+  if (tags != null && tags.Any())
+  {
+    IDocument tagsIndex = Outputs.Get("tags/index.html");
+    if (tagsIndex != null)
+    {
+      <ul class="actions small">
+        @foreach (IDocument tag in tags
+          .Select(x => tagsIndex.GetChildren().FirstOrDefault(y => y.GetTitle().Equals(x, StringComparison.OrdinalIgnoreCase)))
+          .Where(x => x != null))
+        {
+          <li><a href="@Context.GetLink(tag)" class="button small special">@tag.GetTitle()</a></li>
+        }
+      </ul>
+    }
+  }
+}

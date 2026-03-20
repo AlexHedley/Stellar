@@ -1,0 +1,42 @@
+@{
+  bool isPost = Document.GetBool("IsPost") && !Document.GetBool("IsPostArchive");
+  string title = Document.WithoutSettings().GetString("Title");
+  string siteDescription = Context.GetString("SiteDescription");
+  string siteIntro = Context.GetString("SiteIntro");
+  string lead = Document.WithoutSettings().GetString("Lead");
+  var published = Document.GetDateTime(WebKeys.Published);
+}
+<header id="header">
+  @if (isPost)
+  {
+    <h1>@title</h1>
+    @if (!string.IsNullOrWhiteSpace(lead))
+    {
+      <p>@lead</p>
+    }
+    <hr />
+    @if (published != default(DateTime))
+    {
+      <p><em>Published on @published.ToLongDateString(Context)</em></p>
+    }
+  }
+  else if (!string.IsNullOrWhiteSpace(title))
+  {
+    <h1>@title</h1>
+    @if (!string.IsNullOrWhiteSpace(lead))
+    {
+      <p>@lead</p>
+    }
+  }
+  else
+  {
+    @if (!string.IsNullOrEmpty(siteDescription))
+    {
+      <h1>@siteDescription</h1>
+    }
+    @if (!string.IsNullOrEmpty(siteIntro))
+    {
+      <p>@siteIntro</p>
+    }
+  }
+</header>
